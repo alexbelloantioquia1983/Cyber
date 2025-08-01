@@ -1,0 +1,341 @@
+1/8/2025   3:39 a. m.
+
+Index.html
+
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Futurista</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #ecf0f1;
+        }
+        .chat-container {
+            width: 80%;
+            max-width: 400px;
+            height: 70vh;
+            background-color: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chat-header {
+            background-color: rgba(44, 62, 80, 0.9);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .robot-eyes {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .eye {
+            width: 40px;
+            height: 40px;
+            background: #2c3e50;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(52, 152, 219, 0.8);
+            overflow: hidden;
+        }
+        .pupil {
+            width: 16px;
+            height: 16px;
+            background: #3498db;
+            border-radius: 50%;
+            position: absolute;
+            transition: transform 0.5s ease-out;
+        }
+        .pupil::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            top: 4px;
+            left: 4px;
+        }
+        .tagline {
+            font-size: 12px;
+            color: #bdc3c7;
+            font-style: italic;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 80%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .user-message {
+            background: linear-gradient(135deg, #1e88e5, #42a5f5);
+            color: #fff;
+            align-self: flex-end;
+        }
+        .gemini-message {
+            background: linear-gradient(135deg, #5e35b1, #9c27b0);
+            color: #fff;
+            align-self: flex-start;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(30, 41, 59, 0.9);
+        }
+        #user-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #7f8c8d;
+            border-radius: 25px;
+            margin-right: 10px;
+            background-color: rgba(52, 73, 94, 0.7);
+            color: #fff;
+            font-size: 14px;
+        }
+        #user-input::placeholder {
+            color: #bdc3c7;
+        }
+        #user-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        }
+        #send-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #27ae60;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
+        }
+        #send-button:hover {
+            background-color: #219653;
+        }
+        @keyframes blink {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+        .eye.is-blinking {
+            animation: blink 0.2s linear;
+        }
+        .eye.is-thinking .pupil {
+            animation: none;
+            background: #f1c40f;
+        }
+        .eye.is-thinking .pupil::after {
+            display: none;
+        }
+        .eye.is-thinking {
+            animation: blink 0.2s linear 2;
+            animation-delay: 0.1s;
+        }
+        .typing-indicator {
+            display: inline-block;
+            margin-left: 5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #95a5a6;
+            animation: typing 1s infinite alternate;
+        }
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            to {
+                opacity: 0.5;
+                transform: translateY(-3px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="robot-eyes">
+                <div class="eye">
+                    <div class="pupil"></div>
+                </div>
+                <div class="eye">
+                    <div class="pupil"></div>
+                </div>
+            </div>
+            <span class="tagline">Para el país</span>
+        </header>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message gemini-message">
+                <p>¡Hola! ¿Cómo puedo ayudarte hoy?</p>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+            <button id="send-button">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const chatMessages = document.getElementById('chat-messages');
+            const robotEyes = document.querySelectorAll('.eye');
+            const pupils = document.querySelectorAll('.pupil');
+            
+            // URL de tu función de Netlify, importante para conectar
+            const NETLIFY_FUNCTION_URL = '/.netlify/functions/chat';
+
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            function blink() {
+                robotEyes.forEach(eye => { eye.classList.add('is-blinking'); });
+                setTimeout(() => { robotEyes.forEach(eye => { eye.classList.remove('is-blinking'); }); }, 500); 
+            }
+
+            function lookAtInput() {
+                const inputRect = userInput.getBoundingClientRect();
+                const inputCenterX = inputRect.left + inputRect.width / 2;
+                const inputCenterY = inputRect.top + inputRect.height / 2;
+                
+                pupils.forEach(pupil => {
+                    const eyeRect = pupil.parentElement.getBoundingClientRect();
+                    const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+                    const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+
+                    const dx = inputCenterX - eyeCenterX;
+                    const dy = inputCenterY - eyeCenterY;
+
+                    const maxMove = 8;
+                    const moveX = Math.max(-maxMove, Math.min(maxMove, dx * 0.1));
+                    const moveY = Math.max(-maxMove, Math.min(maxMove, dy * 0.1));
+
+                    pupil.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
+            }
+
+            userInput.addEventListener('focus', () => {
+                lookAtInput();
+                blink();
+            });
+
+            userInput.addEventListener('blur', () => {
+                pupils.forEach(pupil => { pupil.style.transform = `translate(0, 0)`; });
+            });
+            
+            async function getGeminiResponse(message) {
+                try {
+                    const response = await fetch(NETLIFY_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: message })
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Error en la función de Netlify: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data.response;
+                } catch (error) {
+                    console.error('Error al comunicarse con la función:', error);
+                    return 'Lo siento, hubo un error al obtener la respuesta.';
+                }
+            }
+
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                appendMessage(message, 'user-message');
+                userInput.value = '';
+                blink();
+
+                robotEyes.forEach(eye => { eye.classList.add('is-thinking'); });
+                const typingIndicator = document.createElement('div');
+                typingIndicator.classList.add('message', 'gemini-message');
+                typingIndicator.innerHTML = '<p>Escribiendo <span class="typing-indicator"></span><span class="typing-indicator"></span><span class="typing-indicator"></span></p>';
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                const geminiResponse = await getGeminiResponse(message);
+                
+                chatMessages.removeChild(typingIndicator);
+                appendMessageAnimated(geminiResponse, 'gemini-message');
+                
+                robotEyes.forEach(eye => { eye.classList.remove('is-thinking'); });
+                blink();
+            }
+
+            function appendMessage(message, className) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', className);
+                messageElement.innerHTML = `<p>${message}</p>`;
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function appendMessageAnimated(text, className) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', className);
+                messageElement.innerHTML = '<p></p>';
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                const pElement = messageElement.querySelector('p');
+                let i = 0;
+                const speed = 30;
+
+                function typewriter() {
+                    if (i < text.length) {
+                        pElement.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typewriter, speed);
+                    }
+                }
+                typewriter();
+            }
+            setTimeout(blink, 1000);
+        });
+    </script>
+</body>
+</html>

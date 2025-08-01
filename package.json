@@ -1,0 +1,19 @@
+1/8/2025   3:37 a. m.
+
+Package.json
+
+{
+  "name": "netlify-gemini-bot",
+  "version": "1.0.0",
+  "description": "A chatbot using Gemini API and Netlify Functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.1.3"
+  }
+}
